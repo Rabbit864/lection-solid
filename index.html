@@ -1,0 +1,674 @@
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/simple.min.css"
+      id="theme"
+    />
+    <link rel="stylesheet" href="highlight-phpstorm-light-theme.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"
+    />
+    <style>
+      :root {
+        --r-main-font: 'Roboto', 'Noto Color Emoji', sans-serif;
+        --r-heading-font: 'Roboto', 'Noto Color Emoji', sans-serif;
+        --r-code-font: 'Roboto Mono', 'Noto Color Emoji', monospace;
+        --r-block-margin: 10px;
+      }
+      .reveal pre {
+        font-size: 0.5em;
+      }
+      .nohighlight {
+        padding: 1em !important;
+      }
+      .reveal .hljs {
+        min-height: auto;
+      }
+      td.hljs-ln-code {
+        white-space: pre;
+      }
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4,
+      .reveal h5,
+      .reveal h6,
+      .reveal pre,
+      .reveal p,
+      .reveal img {
+        margin: 0 var(--r-block-margin) calc(var(--r-block-margin) * 2);
+      }
+      .reveal pre {
+        width: auto;
+      }
+
+      .reveal .r-stack > * {
+        margin: 0;
+      }
+      .horizontal {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .horizontal > * {
+        flex-grow: 1;
+      }
+      .horizontal-half > * {
+        flex-grow: 0 !important;
+        width: calc(50% - var(--r-block-margin) * 2) !important;
+      }
+
+      li {
+        font-size: 30px;
+      }
+    </style>
+    <title>SOLID</title>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h2>SOLID</h2>
+          <ul>
+            <li>
+              Принцип единственной ответственности (Single responsibility)
+            </li>
+            <li>Принцип открытости/закрытости (Open-closed)</li>
+            <li>Принцип подстановки Барбары Лисков (Liskov substitution)</li>
+            <li>Принцип разделения интерфейса (Interface segregation)</li>
+            <li>Принцип инверсии зависимостей (Dependency Inversion)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>Каждый класс должен отвечать только за одну операцию</p>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class Order
+              {
+                public function calculateTotalSum(){/*...*/}
+                public function getItems(){/*...*/}
+                public function getItemCount(){/*...*/}
+                public function addItem($item){/*...*/}
+                public function deleteItem($item){/*...*/}
+
+                public function printOrder(){/*...*/}
+                public function showOrder(){/*...*/}
+
+                public function load(){/*...*/}
+                public function save(){/*...*/}
+                public function update(){/*...*/}
+                public function delete(){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>У нашего класса слишком много отвественности</p>
+          <p>
+            Он и выполняет бизнес требования, и выводит данные, и работает с
+            хранением себя
+          </p>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>Исправляем ситуацию</p>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>Наша бизнес логика остается в классе Order</p>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class Order
+              {
+                public function calculateTotalSum(){/*...*/}
+                public function getItems(){/*...*/}
+                public function getItemCount(){/*...*/}
+                public function addItem($item){/*...*/}
+                public function deleteItem($item){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>Логика с выводом нашего класса переносится в OrderViewer</p>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class OrderViewer
+              {
+                public function printOrder($order){/*...*/}
+                public function showOrder($order){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>А логика с сохранением нашего класса в OrderRepository</p>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class OrderRepository
+              {
+                public function load($orderID){/*...*/}
+                public function save($order){/*...*/}
+                public function update($order){/*...*/}
+                public function delete($order){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Single responsibility</h3>
+          <p>Теперь каждый класс занимается своим делом</p>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <p>
+            Классы должны  быть
+             открыты для расширения, но закрыты для модификации.
+          </p>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <pre>
+            <code  class="language-php" data-trim data-line-numbers="">
+              class Rectangle 
+              {
+                public $width;
+                public $height;
+              
+                public function __construct($width, $height) {
+                  $this->width = $width;
+                  $this->height = $height;
+                }
+              }
+              
+              class Circle 
+              {
+                public $radius;
+              
+                public function __construct($radius) {
+                  $this->radius = $radius;
+                }
+              }
+              
+              class AreaCalculator 
+              {
+                public function calculate(array $shapes) {
+                  $area = [];
+                  foreach ($shapes as $shape) {
+                    if ($shape instanceof Rectangle) {
+                      $area[] = $shape->width * $shape->height;
+                    } elseif ($shape instanceof Circle) {
+                      $area[] = $shape->radius * $shape->radius * pi();
+                    }
+                  }
+              
+                  return array_sum($area);
+                }
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <pre>
+            <code  class="language-php" data-trim data-line-numbers="">
+              class Rectangle 
+              {
+                public $width;
+                public $height;
+              
+                public function __construct($width, $height) {
+                  $this->width = $width;
+                  $this->height = $height;
+                }
+              }
+              
+              class Circle 
+              {
+                public $radius;
+              
+                public function __construct($radius) {
+                  $this->radius = $radius;
+                }
+              }
+              
+              class AreaCalculator 
+              {
+                public function calculate(array $shapes) {
+                  $area = [];
+                  foreach ($shapes as $shape) {
+                    if ($shape instanceof Rectangle) {
+                      $area[] = $shape->width * $shape->height;
+                    } elseif ($shape instanceof Circle) {
+                      $area[] = $shape->radius * $shape->radius * pi();
+                    }
+                  }
+              
+                  return array_sum($area);
+                }
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <p>
+            Когда нам потребуется добавить новую фигуру, нам придётся изменить
+            AreaController
+          </p>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <p>Исправим данную ситуацию</p>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              interface Shape 
+              {
+                public function area(): float;
+              }
+              
+              class Rectangle implements Shape 
+              {
+                public $width;
+                public $height;
+              
+                public function __construct($width, $height) 
+                {
+                  $this->width = $width;
+                  $this->height = $height;
+                }
+              
+                public function area(): float
+                {
+                  return $this->width * $this->height;
+                }
+              }
+              
+              class Circle implements Shape 
+              {
+                public $radius;
+              
+                public function __construct($radius) 
+                {
+                  $this->radius = $radius;
+                }
+              
+                public function area(): float
+                {
+                  return $this->radius * $this->radius * pi();
+                }
+              }
+              
+              class AreaCalculator 
+              {
+                public function calculate($shapes)
+                {
+                  $area = [];
+                  foreach ($shapes as $shape) {
+                    $area[] = $shape->area();
+                  }
+              
+                  return array_sum($area);
+                }
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Open-closed</h3>
+          <p>
+            Теперь когда нам нужно будет добавить новую фигуру, это не поведет
+            за собой изменение AreaCalculator
+          </p>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <p>
+            Если П является подтипом Т, то любые объекты типа Т, присутствующие
+            в программе, могут заменяться объектами типа П без негативных
+            последствий для функциональности программы.
+          </p>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <p>
+            В случаях, когда класс-потомок не способен выполнять те же действия,
+            что и класс-родитель, возникает риск появления ошибок.
+          </p>
+          <p>
+            Если у вас имеется класс и вы создаете на его базе другой класс,
+            исходный класс становится родителем, а новый – его потомком.
+            Класс-потомок должен производить такие же операции, как и
+            класс-родитель. Это называется наследственностью.
+          </p>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class Bird 
+              {
+                public function fly() 
+                {
+                    return "I can fly";
+                }
+              }
+            
+              class Penguin extends Bird 
+              {
+                public function fly() 
+                {
+                    return "I can't fly";
+                }
+              }
+            
+              function letItFly(Bird $bird) {
+                return $bird->fly();
+              }
+            
+              echo letItFly(new Bird()); // "I can fly"
+              echo letItFly(new Penguin()); // "I can't fly"
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <p>
+            В этом примере Penguin является подклассом Bird . Однако не все
+            птицы умеют летать, поэтому когда мы пытаемся заставить Penguin
+            летать, мы получаем неожиданный результат. Это нарушает принцип
+            подстановки Лисков.
+          </p>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <p>Исправляем ситуацию</p>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class Bird  
+              {
+              }
+              
+              interface Flyable  
+              {
+                public function fly();
+              }
+              
+              class Sparrow extends Bird implements Flyable  
+              {
+                public function fly() 
+                {
+                  return "Я умею летать" ;
+                }
+              }
+              
+              class Penguin extends Bird  
+              {
+              }
+              
+              function letItFly(Flyable $bird) 
+              {
+                return $bird->fly();
+              }
+              
+              echo letItFly(new Sparrow ()); // "Я умею летать"
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Liskov Substitution</h3>
+          <p>
+            Принцип служит для того, чтобы обеспечить постоянство:
+            класс-родитель и класс-потомок могут использоваться одинаковым
+            образом без нарушения работы программы.
+          </p>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <p>
+            Не следует ставить клиента в зависимость от методов, которые он не
+            использует
+          </p>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              interface Item
+              {
+                public function applyDiscount($discount);
+                public function applyPromocode($promocode);
+
+                public function setColor($color);
+                public function setSize($size);
+                
+                public function setCondition($condition);
+                public function setPrice($price);
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <p>
+            У нас Item содержит и скидки и то что относится к товару, и то что
+            относится к одежде
+          </p>
+          <p>Из-за чего уменьшается гибкость данного итерфейса</p>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              interface Item
+              {
+                public function setCondition($condition);
+                public function setPrice($price);
+              }
+
+              interface Clothes
+              {
+                  public function setColor($color);
+                  public function setSize($size);
+                  public function setMaterial($material);
+              }
+
+              interface Discountable
+              {
+                public function applyDiscount($discount);
+                public function applyPromocode($promocode);
+              }
+
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class Book implemets Item, Discountable
+              {
+                  public function setCondition($condition){/*...*/}
+                  public function setPrice($price){/*...*/}
+                  public function applyDiscount($discount){/*...*/}
+                  public function applyPromocode($promocode){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class KidsClothes implemets Item, Clothes
+              {
+                  public function setCondition($condition){/*...*/}
+                  public function setPrice($price){/*...*/}
+                  public function setColor($color){/*...*/}
+                  public function setSize($size){/*...*/}
+                  public function setMaterial($material){/*...*/}
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Interface Segregation</h3>
+          <p>
+            Принцип служит для того, чтобы раздробить единый набор действий на
+            ряд наборов поменьше – таким образом, каждый класс делает то, что от
+            него действительно требуется, и ничего больше.
+          </p>
+        </section>
+
+        <section>
+          <h3>Dependency Inversion</h3>
+          <p>
+            Модули верхнего уровня не должны зависеть от модулей нижнего уровня.
+            И те, и другие должны зависеть от абстракций. Абстракции не должны
+            зависеть от деталей. Детали должны зависеть от абстракций.
+          </p>
+        </section>
+
+        <section>
+          <h3>Dependency Inversion</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+              class MySQLConnection  
+              { 
+                public function connect() 
+                { 
+                  return "Подключение к базе данных" ; 
+                } 
+              } 
+          
+              class  PasswordReminder  
+              { 
+                  private $dbConnection ; 
+              
+                  public function __construct (MySQLConnection $dbConnection ) 
+                  { 
+                    $this- >dbConnection = $dbConnection ; 
+                  } 
+              }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Dependency Inversion</h3>
+          <p>
+            В этом примере класс PasswordReminder зависит от класса
+            MySQLConnection
+          </p>
+          <p>Чтобы решить эту проблему, мы можем использовать интерфейс</p>
+        </section>
+
+        <section>
+          <h3>Dependency Inversion</h3>
+          <pre>
+            <code class="language-php" data-trim data-line-numbers="">
+            interface DBConnectionInterface 
+            {
+              public function connect();
+            }
+            
+            class MySQLConnection implements DBConnectionInterface 
+            {
+                public function connect() 
+                {
+                    return "Database connection";
+                }
+            }
+            
+            class PasswordReminder 
+            {
+                private $dbConnection;
+            
+                public function __construct(DBConnectionInterface $dbConnection) 
+                {
+                    $this->dbConnection = $dbConnection;
+                }
+            }
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Dependency Inversion</h3>
+          <p>
+            Этот принцип служит для того, чтобы устранить зависимость классов
+            верхнего уровня от классов нижнего уровня за счёт введения
+            интерфейсов.
+          </p>
+        </section>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/highlight/highlight.min.js"></script>
+    <script>
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        plugins: [RevealHighlight],
+        slideNumber: true,
+        autoAnimate: true,
+      });
+    </script>
+  </body>
+</html>
